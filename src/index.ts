@@ -1,32 +1,11 @@
-import { createSocket } from 'dgram';
-import { networkInterfaces } from 'os';
-import config from './config';
+import config from "./config";
+import { Interactor } from "./contractors/Interactor/Interactor";
 
-const REQUEST_TIMEOUT = 5; // secs
-const REQUEST_COOLDOWN = 1; // mins
+const rujka = new Interactor({
+  ip: 'rujka.ru',
+  port: 29070,
+  rconPw: config.rcon,
+  cooldown: 10,
+})
 
-async function pollServer(HOST: string, PORT: string): Promise<any> {
-  async function getStatusNet() {
-    return new Promise((resolve, reject) => {
-      const packet = Buffer.from(`\xFF\xFF\xFF\xFFrcon ${config.rcon} svsay 123`, 'latin1');
-      const socket = createSocket('udp4');
-      socket.once('message', response => {
-        const msg = response.toString();
-        resolve(msg.split(''))
-      });
-      socket.send(packet, 0, packet.length, +PORT, HOST);
-    });
-  }
-  // `����infoResponse
-  // \\game\\eternaljk\\autodemo\\0\\fdisable\\163837\\wdisable\\524279\\truejedi\\0\\needpass\\1\\gametype\\3\\sv_maxclients\\16\\g_humanplayers\\0\\clients\\0\\mapname\\mp/duel1\\hostname\\^4/^1/^7RU^1JKA^0|^7DUEL\\protocol\\26`
-
-  async function getStatusNetTimeout() {
-    return new Promise(function (resolve, reject) {
-      setTimeout(reject, 1000 * REQUEST_TIMEOUT);
-    });
-  }
-
-  return Promise.race([getStatusNet(), getStatusNetTimeout()]);
-}
-
-// pollServer('rujka.ru', '29070').then((r) => console.log(r))
+rujka.execute()

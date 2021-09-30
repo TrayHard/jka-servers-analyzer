@@ -1,40 +1,25 @@
-import { createSocket } from 'dgram';
-import { TServer } from '../../types';
+import { interval, Observable, OperatorFunction } from 'rxjs';
 import { IServerRequestor, ServerRequestor } from './ServerRequestor';
-
-const REQUEST_TIMEOUT = 5; // secs
-const REQUEST_COOLDOWN = 1; // mins
-
-async function pollServer(HOST: string, PORT: string): Promise<any> {
-  async function getStatusNet() {
-    return new Promise((resolve, reject) => {
-      const packet = Buffer.from('\xFF\xFF\xFF\xFFgetinfo', 'latin1');
-      const socket = createSocket('udp4');
-      socket.on('message', (msg, rinfo) => {
-        resolve(msg.toString());
-      });
-      socket.send(packet, 0, packet.length, +PORT, HOST);
-    });
-  }
-  // `����infoResponse
-  // \\game\\eternaljk\\autodemo\\0\\fdisable\\163837\\wdisable\\524279\\truejedi\\0\\needpass\\1\\gametype\\3\\sv_maxclients\\16\\g_humanplayers\\0\\clients\\0\\mapname\\mp/duel1\\hostname\\^4/^1/^7RU^1JKA^0|^7DUEL\\protocol\\26`
-
-  async function getStatusNetTimeout() {
-    return new Promise(function (resolve, reject) {
-      setTimeout(reject, 1000 * REQUEST_TIMEOUT);
-    });
-  }
-
-  return Promise.race([getStatusNet(), getStatusNetTimeout()]);
-}
 
 export interface IInteractorParams extends IServerRequestor {
   cooldown: number
 }
 
+export enum EInteractoErrors {
+  WRONG_UID_RANGE = 'UID must be from 0 to 31!'
+}
+
 export class Interactor extends ServerRequestor {
+  private _cooldown: number;
+  private _stream$!: Observable<number>;
+
   constructor(params: IInteractorParams) {
-    super(params)
+    super(params);
+    this._cooldown = params.cooldown;
+    this._stream$ = interval(this._cooldown * 1000);
+    this._stream$.subscribe(() => {
+      this.execute();
+    })
   }
 
   private _getInfo(): Promise<string> {
@@ -50,10 +35,20 @@ export class Interactor extends ServerRequestor {
   }
 
   private _getRconDumpUser(uid: number): Promise<string> {
+    if (uid < 0 || uid > 31) throw new Error(EInteractoErrors.WRONG_UID_RANGE);
     return this.doRconRequest(`dumpuser ${uid}`)
   }
 
-  execute() {
-
+  async execute() {
+    if (this.hasRcon) {
+      try {
+        const resp = await this._getRconStatus()
+        console.log('Response: ', resp);
+      } catch (error) {
+        console.error('ERROR', error);
+      }
+    } else {
+      console.error('No rcon');
+    }
   }
 }

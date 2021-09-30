@@ -1,8 +1,9 @@
 import { doRequest } from "../../functions";
 
 export enum EServerRequestErrors {
-  'NO_RCON_PASSWORD' = 'No rcon password provided',
-  'BAD_RCON' = 'Incorrect rcon password',
+  NO_RCON_PASSWORD = 'No rcon password provided',
+  BAD_RCON = 'Incorrect rcon password',
+  INVALID_REQUEST = 'Allowed requests: getinfo, getstatus, rcon <pass> <cmd>',
 }
 
 export interface IServerRequestor {
@@ -22,16 +23,20 @@ export class ServerRequestor {
     this._rconPw = params.rconPw;
   }
 
-  get ip() {
+  get ip(): string {
     return this._ip;
   }
 
-  get port() {
+  get port(): number {
     return this._port
   }
 
-  get hostname() {
+  get hostname(): string {
     return `${this.ip}:${this.port}`
+  }
+
+  get hasRcon(): boolean {
+    return !!this._rconPw;
   }
 
   private _isValidRequest(request: string): boolean {
@@ -48,7 +53,7 @@ export class ServerRequestor {
    * @returns Promise with response
    */
   doRequest(request: string, timeout?: number) {
-    if (!this._isValidRequest(request)) throw new Error ('Allowed requests: getinfo, getstatus, rcon <pass> <cmd>')
+    if (!this._isValidRequest(request)) throw new Error(EServerRequestErrors.INVALID_REQUEST)
     return doRequest({
       ip: this._ip,
       port: this._port,
@@ -67,9 +72,9 @@ export class ServerRequestor {
     if (this._rconPw) return this.doRequest(`rcon ${this._rconPw} ${request}`, timeout)
       .then((response) => {
         const msg = response.slice(10);
-        if (msg === 'Bad rconpassword.\n') throw EServerRequestErrors.BAD_RCON
+        if (msg === 'Bad rconpassword.\n') throw new Error(EServerRequestErrors.BAD_RCON)
         else return msg;
       })
-    else return Promise.reject(EServerRequestErrors.NO_RCON_PASSWORD);
+    else return Promise.reject(new Error(EServerRequestErrors.NO_RCON_PASSWORD));
   }
 }
