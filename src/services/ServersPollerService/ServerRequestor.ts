@@ -1,4 +1,4 @@
-import { doRequest } from "../../functions";
+import { doRequest } from "../../functions/doRequest";
 
 export enum EServerRequestErrors {
   NO_RCON_PASSWORD = 'No rcon password provided',
@@ -9,7 +9,7 @@ export enum EServerRequestErrors {
 export interface IServerRequestor {
   ip: string,
   port: number,
-  rconpassword?: string,
+  rconPassword?: string,
 }
 
 export class ServerRequestor {
@@ -20,7 +20,7 @@ export class ServerRequestor {
   constructor(params: IServerRequestor) {
     this._ip = params.ip;
     this._port = params.port;
-    this._rconpassword = params.rconpassword;
+    this._rconpassword = params.rconPassword;
   }
 
   get ip(): string {
@@ -71,7 +71,7 @@ export class ServerRequestor {
   doRconRequest(request: string, timeout?: number): Promise<string> {
     if (this._rconpassword) return this.doRequest(`rcon ${this._rconpassword} ${request}`, timeout)
       .then((response) => {
-        const msg = response.slice(10);
+        const msg = response.replace(/����print\n/g, '').trim();
         if (msg === 'Bad rconpassword.\n') throw new Error(EServerRequestErrors.BAD_RCON)
         else return msg;
       })

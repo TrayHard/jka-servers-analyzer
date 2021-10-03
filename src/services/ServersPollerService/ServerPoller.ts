@@ -1,7 +1,7 @@
 import { interval, Observable, OperatorFunction, take, takeUntil, takeWhile } from 'rxjs';
 import { IServerRequestor, ServerRequestor } from './ServerRequestor';
 
-export interface IInteractorParams extends IServerRequestor {
+export interface IServerPollerParams extends IServerRequestor {
   cooldown: number
 }
 
@@ -14,7 +14,7 @@ export class ServerPoller extends ServerRequestor {
   private _stream$!: Observable<number>;
   private _isOn!: boolean;
 
-  constructor(params: IInteractorParams) {
+  constructor(params: IServerPollerParams) {
     super(params);
     this._cooldown = params.cooldown;
     this._isOn = true;
@@ -47,7 +47,7 @@ export class ServerPoller extends ServerRequestor {
     if (this.hasRcon) {
       try {
         const resp = await this._getRconStatus()
-        console.log('Response: ', resp);
+        console.log('Response:\n', resp);
       } catch (error) {
         console.error('ERROR', error);
       }

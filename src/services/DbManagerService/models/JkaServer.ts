@@ -3,8 +3,10 @@ import { IJkaServer } from '../interfaces/JkaServer';
 
 const JkaServerSchema = new Schema({
   hostname: { type: String },
+  port: { type: Number },
   label: { type: String },
   rconPassword: { type: String },
+  isPolling: { type: Boolean },
   online: [{
     datetime: { type: Date, default: Date.now() },
     amount: { type: Number },

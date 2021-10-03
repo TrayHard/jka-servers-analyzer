@@ -2,8 +2,10 @@ import { Document } from "mongoose";
 
 export interface IJkaServer extends Document {
   hostname: string,
+  port: number,
   label: string,
-  rconpassword: string,
+  rconPassword: string,
+  isPolling: boolean,
   online: TOnlineStamp[],
   note: string,
 }
