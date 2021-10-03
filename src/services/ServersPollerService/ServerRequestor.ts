@@ -9,18 +9,18 @@ export enum EServerRequestErrors {
 export interface IServerRequestor {
   ip: string,
   port: number,
-  rconPw?: string,
+  rconpassword?: string,
 }
 
 export class ServerRequestor {
   private _ip: string;
   private _port: number;
-  private _rconPw?: string;
+  private _rconpassword?: string;
 
   constructor(params: IServerRequestor) {
     this._ip = params.ip;
     this._port = params.port;
-    this._rconPw = params.rconPw;
+    this._rconpassword = params.rconpassword;
   }
 
   get ip(): string {
@@ -36,7 +36,7 @@ export class ServerRequestor {
   }
 
   get hasRcon(): boolean {
-    return !!this._rconPw;
+    return !!this._rconpassword;
   }
 
   private _isValidRequest(request: string): boolean {
@@ -69,7 +69,7 @@ export class ServerRequestor {
    * @returns Promise with response
    */
   doRconRequest(request: string, timeout?: number): Promise<string> {
-    if (this._rconPw) return this.doRequest(`rcon ${this._rconPw} ${request}`, timeout)
+    if (this._rconpassword) return this.doRequest(`rcon ${this._rconpassword} ${request}`, timeout)
       .then((response) => {
         const msg = response.slice(10);
         if (msg === 'Bad rconpassword.\n') throw new Error(EServerRequestErrors.BAD_RCON)
