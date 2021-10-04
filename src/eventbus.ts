@@ -1,7 +1,8 @@
 import { filter, map, Observer, Subject } from "rxjs";
 
 export enum EEvents {
-  DB_LOADED = 'DB_LOADED'
+  DB_LOADED = 'DB_LOADED',
+  SERVER_POLLING_STARTED = 'SERVER_POLLING_STARTED',
 }
 
 export class EventBus {

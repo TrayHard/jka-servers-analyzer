@@ -1,8 +1,15 @@
 import { interval, Observable, OperatorFunction, take, takeUntil, takeWhile } from 'rxjs';
+import { getClientIds } from '../../functions/getClientIds';
+import store from '../../store/store';
+import logger from '../../utils/logging';
+import { EParserType } from '../DbManagerService/interfaces/JkaServer';
+import { ParserTask } from '../ParserService/ParserTask';
 import { IServerRequestor, ServerRequestor } from './ServerRequestor';
 
 export interface IServerPollerParams extends IServerRequestor {
-  cooldown: number
+  serverId: string,
+  cooldown: number,
+  parserType: EParserType,
 }
 
 export enum EInteractoErrors {
@@ -11,12 +18,16 @@ export enum EInteractoErrors {
 
 export class ServerPoller extends ServerRequestor {
   private _cooldown: number;
-  private _stream$!: Observable<number>;
-  private _isOn!: boolean;
+  private _stream$: Observable<number>;
+  private _isOn: boolean;
+  private _serverId: string;
+  private _parserType: EParserType;
 
   constructor(params: IServerPollerParams) {
     super(params);
     this._cooldown = params.cooldown;
+    this._serverId = params.serverId;
+    this._parserType = params.parserType;
     this._isOn = true;
     this._stream$ = interval(this._cooldown * 1000).pipe(takeWhile(() => this._isOn))
     const self = this;
@@ -38,26 +49,24 @@ export class ServerPoller extends ServerRequestor {
     return this.doRconRequest('status')
   }
 
-  private _getRconDumpUser(uid: number): Promise<string> {
-    if (uid < 0 || uid > 31) throw new Error(EInteractoErrors.WRONG_UID_RANGE);
-    return this.doRconRequest(`dumpuser ${uid}`)
-  }
+  // TODO: Clientuseinfo parsing for next version
+  // private _getRconDumpUser(uid: number): Promise<string> {
+  //   if (uid < 0 || uid > 31) throw new Error(EInteractoErrors.WRONG_UID_RANGE);
+  //   return this.doRconRequest(`dumpuser ${uid}`)
+  // }
 
   async execute() {
-    if (this.hasRcon) {
-      try {
-        const resp = await this._getRconStatus()
-        console.log('Response:\n', resp);
-      } catch (error) {
-        console.error('ERROR', error);
-      }
-    } else {
-      try {
-        const resp = await this._getStatus()
-        console.log('Response: ', resp);
-      } catch (error) {
-        console.error('ERROR', error);
-      }
+    const self = this;
+    try {
+      const stringToParse = this.hasRcon ? await this._getRconStatus() : await this._getStatus();
+      store.parserQueue.data.push(new ParserTask({
+        stringToParse,
+        serverId: self._serverId,
+        parserType: self._parserType,
+        isRcon: false,
+      }))
+    } catch (error) {
+      logger.error('ERROR', '', error);
     }
   }
 

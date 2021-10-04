@@ -20,15 +20,22 @@ export class ServersPollerService extends ServiceBase {
         self.pollers = servers
           .filter(server => server.isPolling)
           .map(server => new ServerPoller({
+            serverId: server._id,
             ip: server.hostname,
             port: server.port,
             rconPassword: server.rconPassword,
+            parserType: server.parserType,
             cooldown: 10,
-          }))
+          }));
         sub.unsubscribe();
-        logger.info('ServersPollerService', 'Servers polling has been started!');
+        self._broadcast();
       }
     })
+  }
+
+  private _broadcast(): void {
+    logger.info('ServersPollerService', 'Servers polling has been started!');
+    this.eventBus.emit(EEvents.SERVER_POLLING_STARTED);
   }
 }
 

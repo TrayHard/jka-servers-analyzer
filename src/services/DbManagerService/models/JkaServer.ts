@@ -7,6 +7,7 @@ const JkaServerSchema = new Schema({
   label: { type: String },
   rconPassword: { type: String },
   isPolling: { type: Boolean },
+  parserType: { enum: ['japro', 'ybeproxy', 'base'] },
   online: [{
     datetime: { type: Date, default: Date.now() },
     amount: { type: Number },

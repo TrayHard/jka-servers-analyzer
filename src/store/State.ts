@@ -18,7 +18,7 @@ export class State<T extends object> {
     });
   }
 
-  subscribe(observer: Observer<T>) {
+  subscribe(observer: Partial<Observer<T>>) {
     const subscription = this._subject$.subscribe(observer);
     this._subscriptions.push(subscription);
     return subscription;

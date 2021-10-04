@@ -5,14 +5,14 @@ import config from './config';
 const REQUEST_TIMEOUT = 5; // secs
 const REQUEST_COOLDOWN = 1; // mins
 
-async function pollServer(HOST: string, PORT: string): Promise<any> {
+export async function pollServer(HOST: string, PORT: string): Promise<any> {
   async function getStatusNet() {
     return new Promise((resolve, reject) => {
-      const packet = Buffer.from(`\xFF\xFF\xFF\xFFrcon ${config.rcon} svsay 123`, 'latin1');
+      const packet = Buffer.from(`\xFF\xFF\xFF\xFFrcon 6LUWJW8pKk6LPyLd status`, 'latin1');
       const socket = createSocket('udp4');
       socket.once('message', response => {
         const msg = response.toString();
-        resolve(msg.split(''))
+        resolve(msg)
       });
       socket.send(packet, 0, packet.length, +PORT, HOST);
     });
@@ -28,5 +28,3 @@ async function pollServer(HOST: string, PORT: string): Promise<any> {
 
   return Promise.race([getStatusNet(), getStatusNetTimeout()]);
 }
-
-// pollServer('rujka.ru', '29070').then((r) => console.log(r))
