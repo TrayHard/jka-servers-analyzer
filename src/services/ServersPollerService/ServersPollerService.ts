@@ -25,7 +25,7 @@ export class ServersPollerService extends ServiceBase {
             port: server.port,
             rconPassword: server.rconPassword,
             parserType: server.parserType,
-            cooldown: 10,
+            cooldown: 30,
           }));
         sub.unsubscribe();
         self._broadcast();

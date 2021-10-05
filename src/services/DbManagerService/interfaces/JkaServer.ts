@@ -1,9 +1,10 @@
 import { Document } from "mongoose";
+import { OnlineStamp } from "../../ParserService/OnlineStamp";
 
 export enum EParserType {
-  JAPRO = 'japro',
-  YBEPROXY = 'ybeproxy',
-  BASE = 'base',
+  JAPRO = 'JAPRO',
+  YBEPROXY = 'YBEPROXY',
+  BASE = 'BASE',
 }
 
 export interface IJkaServer extends Document {
@@ -12,12 +13,7 @@ export interface IJkaServer extends Document {
   label: string,
   rconPassword: string,
   isPolling: boolean,
-  parserType: EParserType,
-  online: TOnlineStamp[],
+  parserType: EParserType
+  online: OnlineStamp[],
   note: string,
-}
-
-export type TOnlineStamp = {
-  datetime: Date,
-  amount: number,
 }

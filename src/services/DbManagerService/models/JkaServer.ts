@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IJkaServer } from '../interfaces/JkaServer';
+import { EParserType, IJkaServer } from '../interfaces/JkaServer';
 
 const JkaServerSchema = new Schema({
   hostname: { type: String },
@@ -7,7 +7,7 @@ const JkaServerSchema = new Schema({
   label: { type: String },
   rconPassword: { type: String },
   isPolling: { type: Boolean },
-  parserType: { enum: ['japro', 'ybeproxy', 'base'] },
+  parserType: { type: String, enum: [EParserType.JAPRO, EParserType.YBEPROXY, EParserType.BASE], required: true },
   online: [{
     datetime: { type: Date, default: Date.now() },
     amount: { type: Number },

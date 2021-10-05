@@ -9,9 +9,9 @@ export class State<T extends object> {
     const self = this;
     this.data = new Proxy<T>(data, {
       set(target, prop, value) {
-        if (prop && prop in target) {
+        if (prop) {
           target[prop as keyof T] = value;
-          self._subject$.next(value);
+          self._subject$.next(target);
           return true;
         } else return false;
       }

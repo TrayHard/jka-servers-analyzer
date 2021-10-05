@@ -35,6 +35,7 @@ const SERVER = {
 const config = {
     mongo: MONGO,
     server: SERVER,
+    isDebug: true,
 };
 
 export default config;

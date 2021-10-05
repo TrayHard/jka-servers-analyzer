@@ -1,5 +1,4 @@
-import { interval, Observable, OperatorFunction, take, takeUntil, takeWhile } from 'rxjs';
-import { getClientIds } from '../../functions/getClientIds';
+import { interval, Observable, takeWhile } from 'rxjs';
 import store from '../../store/store';
 import logger from '../../utils/logging';
 import { EParserType } from '../DbManagerService/interfaces/JkaServer';
@@ -13,7 +12,7 @@ export interface IServerPollerParams extends IServerRequestor {
 }
 
 export enum EInteractoErrors {
-  WRONG_UID_RANGE = 'UID must be from 0 to 31!'
+  WRONG_UID_RANGE = 'UID must be from 0 to 31!',
 }
 
 export class ServerPoller extends ServerRequestor {
@@ -29,7 +28,7 @@ export class ServerPoller extends ServerRequestor {
     this._serverId = params.serverId;
     this._parserType = params.parserType;
     this._isOn = true;
-    this._stream$ = interval(this._cooldown * 1000).pipe(takeWhile(() => this._isOn))
+    this._stream$ = interval(this._cooldown * 1000).pipe(takeWhile(() => this._isOn));
     const self = this;
     this._stream$.subscribe({
       next() {
@@ -42,11 +41,11 @@ export class ServerPoller extends ServerRequestor {
   }
 
   private _getStatus(): Promise<string> {
-    return this.doRequest('getstatus')
+    return this.doRequest('getstatus');
   }
 
   private _getRconStatus(): Promise<string> {
-    return this.doRconRequest('status')
+    return this.doRconRequest('status');
   }
 
   // TODO: Clientuseinfo parsing for next version
@@ -58,15 +57,15 @@ export class ServerPoller extends ServerRequestor {
   async execute() {
     const self = this;
     try {
-      const stringToParse = this.hasRcon ? await this._getRconStatus() : await this._getStatus();
+      const getStatusResponse = await this._getStatus();
       store.parserQueue.data.push(new ParserTask({
-        stringToParse,
+        stringToParse: getStatusResponse,
         serverId: self._serverId,
         parserType: self._parserType,
         isRcon: false,
-      }))
+      }));
     } catch (error) {
-      logger.error('ERROR', '', error);
+      logger.error('ServerPoller', '', error);
     }
   }
 
