@@ -8,7 +8,7 @@ const REQUEST_COOLDOWN = 1; // mins
 export async function pollServer(HOST: string, PORT: string): Promise<any> {
   async function getStatusNet() {
     return new Promise((resolve, reject) => {
-      const packet = Buffer.from(`\xFF\xFF\xFF\xFFrcon 6LUWJW8pKk6LPyLd status`, 'latin1');
+      const packet = Buffer.from(`\xFF\xFF\xFF\xFFrcon ${process.env.RCON} status`, 'latin1');
       const socket = createSocket('udp4');
       socket.once('message', response => {
         const msg = response.toString();

@@ -5,6 +5,7 @@ const JkaServerSchema = new Schema({
   hostname: { type: String },
   port: { type: Number },
   label: { type: String },
+  gPassword: { type: String },
   rconPassword: { type: String },
   isPolling: { type: Boolean },
   parserType: { type: String, enum: [EParserType.JAPRO, EParserType.YBEPROXY, EParserType.BASE], required: true },
