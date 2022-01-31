@@ -7,3 +7,7 @@ export const getTimeStamp = (): string => {
 export const getTimeStampUnix = (): number => {
     return +moment();
 };
+
+export const parseIntOtherwiseZero = (str: string): number => {
+    return isNaN(parseInt(str)) ? 0 : parseInt(str);
+}
