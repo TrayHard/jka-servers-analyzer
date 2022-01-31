@@ -1,4 +1,5 @@
 import { doRequest } from "../../functions/doRequest";
+import crypto from 'asymmetric-crypto';
 
 export enum EServerRequestErrors {
   NO_RCON_PASSWORD = 'No rcon password provided',
@@ -20,7 +21,19 @@ export class ServerRequestor {
   constructor(params: IServerRequestor) {
     this._ip = params.ip;
     this._port = params.port;
-    this._rconpassword = params.rconPassword;
+    if (params.rconPassword) {
+      if (!process.env.BCRYPT_PUBLIC || !process.env.BCRYPT_PRIVATE || !process.env.RCON_NONCE) {
+        console.error('No envs: BCRYPT_PUBLIC or BCRYPT_PRIVATE or RCON_NONCE');
+      } else {
+        crypto.decrypt(
+          params.rconPassword,
+          process.env.RCON_NONCE,
+          process.env.BCRYPT_PUBLIC,
+          process.env.BCRYPT_PRIVATE
+        );
+        this._rconpassword = params.rconPassword;
+      }
+    }
   }
 
   get ip(): string {

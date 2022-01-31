@@ -11,6 +11,7 @@ export interface IJkaServer extends Document {
   hostname: string,
   port: number,
   label: string,
+  gPassword: string,
   rconPassword: string,
   isPolling: boolean,
   parserType: EParserType

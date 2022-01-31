@@ -2,7 +2,6 @@ import { ServiceBase } from "..";
 import { EEvents } from "../../eventbus";
 import { getStatusParser, TClient } from "../../functions/getStatusParser";
 import logger from "../../utils/logging";
-import { EParserType } from "../DbManagerService/interfaces/JkaServer";
 import { JkaClient } from "../DbManagerService/models/JkaClient";
 import { OnlineStamp } from "./OnlineStamp";
 import { ParserTask } from "./ParserTask";
