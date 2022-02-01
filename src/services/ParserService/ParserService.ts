@@ -1,3 +1,4 @@
+import { log } from "util";
 import { ServiceBase } from "..";
 import { EEvents } from "../../eventbus";
 import { getStatusParser, TClient } from "../../functions/getStatusParser";
@@ -8,6 +9,11 @@ import { ParserTask } from "./ParserTask";
 
 const NAMESPACE = 'ParserService';
 
+/**
+ * start() => waitUntilDataInQueue() => processDataFromQueue =>
+ * => processQueue() means processTask() unless no task left =>
+ * => back to waitUntilDataInQueue()
+ */
 export class ParserService extends ServiceBase {
   constructor() {
     super();
@@ -46,8 +52,16 @@ export class ParserService extends ServiceBase {
   async processTask(task: ParserTask): Promise<void> {
     const parsedData = getStatusParser(task.stringToParse);
     const server = this.store.servers.data.find(server => server._id === task.serverId);
+    logger.debug('ParserService', 'Processing the task', task)
     if (server) {
       server.online.push(new OnlineStamp(parsedData.clients.length))
+      server.map = parsedData.map;
+      server.gametype = parsedData.gametype;
+      server.weaponDisable = parsedData.weaponDisable;
+      server.maxClients = parsedData.maxClients;
+      server.fraglimit = parsedData.fraglimit;
+      server.timelimit = parsedData.timelimit;
+
       await server.save();
       logger.debug(NAMESPACE, `Updating server, name: "${server.label}", online: ${parsedData.clients.length}`);
     };

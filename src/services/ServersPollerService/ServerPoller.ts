@@ -11,10 +11,14 @@ export interface IServerPollerParams extends IServerRequestor {
   parserType: EParserType,
 }
 
-export enum EInteractoErrors {
-  WRONG_UID_RANGE = 'UID must be from 0 to 31!',
-}
+// ? TODO: Will be needed when Clientuserinfo would be implemented
+// export enum EInteractErrors {
+//   WRONG_UID_RANGE = 'UID must be from 0 to 31!',
+// }
 
+/**
+ * Polls JKA server with specified cooldown and parserType
+ */
 export class ServerPoller extends ServerRequestor {
   private _cooldown: number;
   private _stream$: Observable<number>;
@@ -28,9 +32,11 @@ export class ServerPoller extends ServerRequestor {
     this._serverId = params.serverId;
     this._parserType = params.parserType;
     this._isOn = true;
+
     this._stream$ = interval(this._cooldown * 1000).pipe(takeWhile(() => this._isOn));
     const self = this;
     this._stream$.subscribe({
+      // Once created: each _cooldown secs poll the server and parse the data unless _isOn is false
       next() {
         self.execute();
       },
@@ -44,13 +50,14 @@ export class ServerPoller extends ServerRequestor {
     return this.doRequest('getstatus');
   }
 
-  private _getRconStatus(): Promise<string> {
-    return this.doRconRequest('status');
-  }
+  // ! TODO: Rcon status parsing
+  // private _getRconStatus(): Promise<string> {
+  //   return this.doRconRequest('status');
+  // }
 
-  // TODO: Clientuseinfo parsing for next version
+  // ? TODO: Clientuserinfo parsing for next version
   // private _getRconDumpUser(uid: number): Promise<string> {
-  //   if (uid < 0 || uid > 31) throw new Error(EInteractoErrors.WRONG_UID_RANGE);
+  //   if (uid < 0 || uid > 31) throw new Error(EInteractErrors.WRONG_UID_RANGE);
   //   return this.doRconRequest(`dumpuser ${uid}`)
   // }
 
@@ -61,7 +68,7 @@ export class ServerPoller extends ServerRequestor {
       store.parserQueue.data.push(new ParserTask({
         stringToParse: getStatusResponse,
         serverId: self._serverId,
-        parserType: self._parserType,
+        // parserType: self._parserType,
         isRcon: false,
       }));
     } catch (error) {

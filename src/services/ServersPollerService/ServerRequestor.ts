@@ -1,5 +1,6 @@
 import { doRequest } from "../../functions/doRequest";
-import crypto from 'asymmetric-crypto';
+import { createDecipheriv, createCipheriv, randomBytes } from 'crypto';
+import { decrypt, encrypt } from "../../utils/cryptoTools";
 
 export enum EServerRequestErrors {
   NO_RCON_PASSWORD = 'No rcon password provided',
@@ -13,6 +14,9 @@ export interface IServerRequestor {
   rconPassword?: string,
 }
 
+/**
+ * Provides object linked to specific JKA server and allows you to make requests
+ */
 export class ServerRequestor {
   private _ip: string;
   private _port: number;
@@ -22,17 +26,7 @@ export class ServerRequestor {
     this._ip = params.ip;
     this._port = params.port;
     if (params.rconPassword) {
-      if (!process.env.BCRYPT_PUBLIC || !process.env.BCRYPT_PRIVATE || !process.env.RCON_NONCE) {
-        console.error('No envs: BCRYPT_PUBLIC or BCRYPT_PRIVATE or RCON_NONCE');
-      } else {
-        crypto.decrypt(
-          params.rconPassword,
-          process.env.RCON_NONCE,
-          process.env.BCRYPT_PUBLIC,
-          process.env.BCRYPT_PRIVATE
-        );
-        this._rconpassword = params.rconPassword;
-      }
+      this._rconpassword = decrypt(params.rconPassword);
     }
   }
 
@@ -89,5 +83,9 @@ export class ServerRequestor {
         else return msg;
       })
     else return Promise.reject(new Error(EServerRequestErrors.NO_RCON_PASSWORD));
+  }
+
+  async getCvarValue(cvar: string) {
+    return await this.doRconRequest(cvar)
   }
 }

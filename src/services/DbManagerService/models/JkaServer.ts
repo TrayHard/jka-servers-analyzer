@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { EParserType, IJkaServer } from '../interfaces/JkaServer';
+import { EParserType, TJkaServer } from '../interfaces/JkaServer';
 
 const JkaServerSchema = new Schema({
   hostname: { type: String },
@@ -16,4 +16,4 @@ const JkaServerSchema = new Schema({
   note: { type: String },
 });
 
-export const JkaServer = mongoose.model<IJkaServer>('JkaServer', JkaServerSchema);
+export const JkaServer = mongoose.model<TJkaServer>('JkaServer', JkaServerSchema);

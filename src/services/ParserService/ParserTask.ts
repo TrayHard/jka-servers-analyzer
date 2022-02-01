@@ -1,24 +1,29 @@
 import { EParserType } from "../DbManagerService/interfaces/JkaServer";
 
-export interface IParserTaskParams {
+export type TParserTaskParams = {
   stringToParse: string,
   serverId: string,
-  isRcon: boolean,
+} & ({
+  isRcon: true,
   parserType: EParserType,
-}
+} | {
+  isRcon: false,
+})
 
 export class ParserTask {
   stringToParse: string;
   serverId: string;
-  parserType: EParserType;
+  parserType?: EParserType;
   isRcon: boolean;
   date: Date;
 
-  constructor(params: IParserTaskParams) {
+  constructor(params: TParserTaskParams) {
     this.stringToParse = params.stringToParse;
     this.serverId = params.serverId;
     this.isRcon = params.isRcon;
-    this.parserType = params.parserType;
+    if (params.isRcon) {
+      this.parserType = params.parserType;
+    }
     this.date = new Date();
   }
 }

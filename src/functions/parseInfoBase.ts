@@ -1,11 +1,12 @@
 import { EParserType } from "../services/DbManagerService/interfaces/JkaServer";
-import { IParserTaskParams, ParserTask } from "../services/ParserService/ParserTask";
+import { TParserTaskParams, ParserTask } from "../services/ParserService/ParserTask";
+import { EGametypes } from "../types";
 
-export interface IParseInfoBaseParams extends IParserTaskParams {
+export type TParseInfoBaseParams = TParserTaskParams & {
   parserType: EParserType.BASE,
 }
 
-export const parseInfoBase = (task: IParseInfoBaseParams) => {
+export const parseInfoBase = (task: TParseInfoBaseParams) => {
   if (task.isRcon) {
     let str = task.stringToParse;
     str = str.replace(/����print\n/g, '');
@@ -18,17 +19,8 @@ export const parseInfoBase = (task: IParseInfoBaseParams) => {
 export type TServerDataParsed = {
   playersAmount: number,
   map: string,
-  gamemode: EGamemodes,
+  gametype: EGametypes,
   players: TPlayer[],
-}
-
-export enum EGamemodes {
-  FFA = 'FFA',
-  DUEL = 'DUEL',
-  POWER_DUEL = 'POWER_DUEL',
-  TFFA = 'TFFA',
-  CTF = 'CTF',
-  SIEGE = 'SIEGE',
 }
 
 export type TPlayer = {

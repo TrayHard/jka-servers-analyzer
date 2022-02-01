@@ -1,4 +1,5 @@
 import { Document } from "mongoose";
+import { TGetStatusDataParsed } from "../../../functions/getStatusParser";
 import { OnlineStamp } from "../../ParserService/OnlineStamp";
 
 export enum EParserType {
@@ -7,7 +8,7 @@ export enum EParserType {
   BASE = 'BASE',
 }
 
-export interface IJkaServer extends Document {
+interface IJkaServer extends Document {
   hostname: string,
   port: number,
   label: string,
@@ -18,3 +19,5 @@ export interface IJkaServer extends Document {
   online: OnlineStamp[],
   note: string,
 }
+
+export type TJkaServer = IJkaServer & TGetStatusDataParsed;
