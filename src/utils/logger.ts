@@ -18,7 +18,7 @@ function writeToLogFile(logFile: any, message: string, object?: any) {
 }
 
 const info = (namespace: string, message: string, object?: any) => {
-  const str = `[${colors.green(getTimeStamp())}] ${colors.cyan('INFO')} [${namespace}] ${colors.cyan('|')} ${message}`;
+  const str = `[${colors.gray(getTimeStamp())}] ${colors.cyan('INFO')} [${namespace}] ${colors.cyan('|')} ${message}`;
   const toPrint = [str];
   object && toPrint.push(object);
   console.log(...toPrint);
@@ -28,7 +28,7 @@ const info = (namespace: string, message: string, object?: any) => {
 };
 
 const warn = (namespace: string, message: string, object?: any) => {
-  const str = `[${getTimeStamp()}] ${colors.yellow('WARN')} [${namespace}] ${colors.yellow('|')} ${message}`;
+  const str = `[${colors.gray(getTimeStamp())}] ${colors.yellow('WARN')} [${namespace}] ${colors.yellow('|')} ${message}`;
   const toPrint = [str];
   object && toPrint.push(object);
   console.warn(...toPrint);
@@ -38,7 +38,7 @@ const warn = (namespace: string, message: string, object?: any) => {
 };
 
 const error = (namespace: string, message: string, object?: any) => {
-  const str = `[${getTimeStamp()}] ${colors.red('ERROR')} [${namespace}] | ${message}`;
+  const str = `[${colors.gray(getTimeStamp())}] ${colors.red('ERROR')} [${namespace}] | ${message}`;
   const toPrint = [str];
   object && toPrint.push(object);
   console.error(colors.red(...toPrint));
@@ -50,7 +50,7 @@ const error = (namespace: string, message: string, object?: any) => {
 
 const debug = (namespace: string, message: string, object?: any) => {
   if (!config.debug) return;
-  const str = `[${getTimeStamp()}] ${colors.blue('DEBUG')} [${namespace}] ${colors.blue('|')} ${message}`;
+  const str = `[${colors.gray(getTimeStamp())}] ${colors.blue('DEBUG')} [${namespace}] ${colors.blue('|')} ${message}`;
   const toPrint = [str];
   object && toPrint.push(object);
   console.debug(...toPrint);
