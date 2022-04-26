@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { ServiceBase } from "..";
 import config from "../../config";
 import { EEvents } from "../../eventbus";
-import logger from "../../utils/logging";
+import logger from "../../utils/logger";
 
 const NAMESPACE = 'DBService'
 

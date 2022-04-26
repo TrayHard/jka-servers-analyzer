@@ -1,7 +1,7 @@
 import app, { App } from "../app";
 import eventBus, { EventBus } from "../eventbus";
 import store, { Store } from "../store/store";
-import logger from "../utils/logging";
+import logger from "../utils/logger";
 
 interface IServiceBase {
   app: App,

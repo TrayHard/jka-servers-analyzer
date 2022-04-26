@@ -32,10 +32,19 @@ const SERVER = {
     port: SERVER_PORT
 };
 
+const logs = {
+    debugPath: process.env.DEBUG_LOG_FILE_PATH || './logs/debug.log',
+    errorPath: process.env.ERROR_LOG_FILE_PATH || './logs/error.log',
+    fullPath: process.env.FULL_LOG_FILE_PATH || './logs/full.log',
+}
+
 const config = {
     mongo: MONGO,
     server: SERVER,
     isDebug: true,
+    isDevMode: process.env.DEV_MODE === 'true',
+    debug: process.env.DEBUG === 'true',
+    logs,
 };
 
 export default config;

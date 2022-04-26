@@ -1,6 +1,6 @@
 import { ServiceBase } from "..";
 import { EEvents } from "../../eventbus";
-import logger from "../../utils/logging";
+import logger from "../../utils/logger";
 import { JkaServer } from "../DbManagerService/models/JkaServer";
 import { ServerPoller } from "./ServerPoller";
 

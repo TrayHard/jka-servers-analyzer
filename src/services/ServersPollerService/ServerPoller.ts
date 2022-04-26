@@ -1,6 +1,6 @@
 import { interval, Observable, takeWhile } from 'rxjs';
 import store from '../../store/store';
-import logger from '../../utils/logging';
+import logger from '../../utils/logger';
 import { EParserType } from '../DbManagerService/interfaces/JkaServer';
 import { ParserTask } from '../ParserService/ParserTask';
 import { IServerRequestor, ServerRequestor } from './ServerRequestor';
